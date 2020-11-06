@@ -1,25 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import {useEffect} from 'react';
+import 'lazysizes';
+import KuaiZX from './KuaiZX.js';
+import './assets/scss/athm.scss';
 
-function App() {
+function handleLazybeforeunveil(e) {
+  // 过滤 http(s)
+  const el = e.target;
+  const imgSrc = el.dataset.src && el.dataset.src.replace(/^https?:/, '');
+  el.dataset.src = imgSrc;
+}
+
+function App(){
+  useEffect(() => {
+    document.addEventListener('lazybeforeunveil', handleLazybeforeunveil);
+    return () => {
+      document.removeEventListener('lazybeforeunveil', handleLazybeforeunveil);
+    };
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <KuaiZX />
+  )
 }
 
 export default App;

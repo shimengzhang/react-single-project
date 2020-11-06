@@ -1,0 +1,341 @@
+@charset "UTF-8";
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,input,select,textarea,button,label,legend,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;outline:0}
+table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;outline:0;font-size:100%;font:inherit;vertical-align:baseline}
+ol,ul{list-style:none;}
+a{text-decoration:none;}
+img{vertical-align:top;}
+input,select,textarea{margin:0;padding:0;font-size:100%;font:inherit;-webkit-tap-highlight-color:rgba(0,0,0,0);tap-highlight-color:rgba(0,0,0,0);outline:0;box-shadow:none;}
+html{
+  word-wrap:break-word;
+  word-break:break-all;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  tap-highlight-color: rgba(0,0,0,0);
+  cursor: pointer;
+}
+
+//全局设定
+html{ background-color:#fff; font:16px/1 -apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,
+"PingFang SC","Hiragino Sans GB","Heiti SC",STHeiTi,"Microsoft YaHei",
+sans-serif; color: #111E36;}
+//特殊数字字体
+@font-face {
+  font-family: DINAlternate-Bold;
+  src:
+  local("DINAlternate-Bold"),
+  url("//s.autoimg.cn/mass/font/DINAlternate-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: Impact;
+  src:
+  local("Impact"),
+  url("//s.autoimg.cn/www/yunchezhan/font/Impact.ttf") format("truetype");
+}
+// 去除图片懒加载时的黑框
+img[src=""],img:not([src]){
+  opacity:0;
+}
+
+//预加载图
+%athm-holdimg-white    {
+  background: #fff url(//s.autoimg.cn/mass/athm19/holdimg_white.png) center center no-repeat;
+  background-size: 50% auto;
+}
+
+//组件卡片
+.athm-card {
+  line-height: 1;
+  overflow: hidden;
+  .athm-title { margin-top: 20px;}
+  &::after {
+    content: "";
+    display: block;
+    height: 0;
+    margin: 0 20px;
+    border-bottom: solid #F1F3F6 1px;
+    overflow: hidden;
+    transform: scaleY(0.5);
+  }
+}
+
+.athm-card-unit-information {
+  height: 12px;
+  font-weight: 300;
+  &__assist {
+    position: relative;
+    top: -2px;
+    height: 12px;
+    padding: 2px 0;
+    font-size: 1px;
+    color: #666D7F;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  &__item {
+    margin-left: 10px;
+    font-size: 12px;
+    color: #666D7F;
+    line-height: 1;
+    vertical-align: top;
+    &:first-child { margin-left: 0;}
+    &--blue { color: #0055FF;}
+    &--orange { color: #FF6600;}
+    &--right {
+      float: right;
+      margin-left: 10px !important;
+    }
+  }
+  &__avatar {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: -2px 0 0 10px;
+    vertical-align: top;
+    border-radius: 50%;
+    &:first-child { margin-left: 0;}
+  }
+  &__original,
+  &__fastest {
+    display: inline-block;
+    width: 48px;
+    height: 12px;
+    margin: -2px 0 0 10px;
+    padding: 2px 0;
+    text-align: center;
+    vertical-align: top;
+    background: rgba(#0055FF,0.1);
+    border-radius: 4px 0 4px 0;
+    &:first-child { margin-left: 0;}
+    i {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 400;
+      color: #0055FF;
+      line-height: 1;
+      vertical-align: top;
+      transform: scale(0.833);
+      transform-origin: center;
+    }
+  }
+  &__fastest {
+    background: rgba(#FF6600,0.1);
+    i { color: #FF6600;}
+  }
+  &__division {
+    margin: 0 5px;
+    font-size: 12px;
+    color: #C5CAD4;
+    line-height: 1;
+    vertical-align: top;
+    + span { margin-left: 0;}
+  }
+}
+
+.athm-card-album43 {
+  display: block;
+  padding: 16px 20px 20px;
+  overflow: hidden;
+  &__caption {
+    max-height: 48px;
+    font-size: 18px;
+    color: #111E36;
+    line-height: 24px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    @at-root a:visited & { color: #666D7F;}
+  }
+  &__album {
+    display: flex;
+    margin-top: 12px;
+  }
+  &__assist {
+    position: relative;
+    width: 0;
+    flex-grow: 1;
+    margin-right: 3px;
+    overflow: hidden;
+    @extend %athm-holdimg-white;
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+      img { border-radius: 4px 0 0 4px;}
+    }
+    &:last-child {
+      margin-right: 0;
+      border-radius: 0 4px 4px 0;
+      img { border-radius: 0 4px 4px 0;}
+    }
+    &::before {
+      content: "";
+      display: block;
+      height: 0;
+      padding-top: 75%;
+      overflow: hidden;
+    }
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      border-radius: 0;
+    }
+  }
+  &__count {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    color: rgba(#FFFFFF,0.9);
+    padding: 8px;
+    background-image: linear-gradient(144deg, rgba(0,0,0,0.00) 59%, rgba(0,0,0,0.21) 100%);
+    border-radius: 4px;
+    span { font-family: DINAlternate-Bold;}
+  }
+  .athm-card-unit-information { margin: 16px 0 -4px;}
+}
+.athm-card-thumb43 {
+  position: relative;
+  display: block;
+  padding: 16px 26px 16px 20px;
+  overflow: hidden;
+  &__assist {
+    position: relative;
+    float: right;
+    width: 33.333%;
+    margin: 0 -6px 0 12px;
+    border-radius: 4px;
+    overflow: hidden;
+    @extend %athm-holdimg-white;
+    &::before {
+      content: "";
+      display: block;
+      height: 0;
+      padding-top: 75%;
+      overflow: hidden;
+    }
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .athm-iconpng-headset {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(144deg, rgba(0,0,0,0.00) 59%, rgba(0,0,0,0.21) 100%);
+      border-radius: 4px;
+      &::before {
+        position: absolute;
+        right: 7px;
+        bottom: 6px;
+      }
+    }
+  }
+  &__time {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(144deg, rgba(0,0,0,0.00) 59%, rgba(0,0,0,0.21) 100%);
+    border-radius: 4px;
+    time {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      font-family: DINAlternate-Bold;
+      font-size: 12px;
+      color: rgba(#FFFFFF,0.9);
+      .athm-iconpng-miniplayer {
+        display: inline-block;
+        margin: 0 2px 0 0;
+        line-height: 0;
+        vertical-align: top;
+      }
+    }
+  }
+  &__caption {
+    max-height: 48px;
+    font-size: 18px;
+    color: #111E36;
+    line-height: 24px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    @at-root .athm-card-thumb43__threerows & {
+      max-height: 72px;
+      -webkit-line-clamp: 3;
+    }
+    @at-root a:visited & { color: #666D7F;}
+  }
+  .athm-card-unit-information {
+    position: absolute;
+    bottom: 18px;
+    left: 20px;
+    width: calc(66.666% - 30.666px - 6px);
+    @at-root .athm-card-thumb43__threerows .athm-card-unit-information {
+      clear: both;
+      position: static;
+      width: auto;
+      padding-top: 16px;
+      margin-right: -6px;
+    }
+  }
+}
+
+//组件加载
+.athm-loading {
+  padding: 13px 0;
+  font-size: 12px;
+  color: #7E8DA6;
+  line-height: 18px;
+  text-align: center;
+  overflow: hidden;
+  @keyframes athm-loading {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .athm-iconpng-loadingblue {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    line-height: 0;
+    vertical-align: top;
+    animation: athm-loading 500ms linear infinite;
+  }
+}
+
+
+.athm-iconpng::before{
+    content: "";
+    display: inline-block;
+    vertical-align: top;
+    background: url(//s.autoimg.cn/mass/athm19/athm-iconpng-v20191225.png) no-repeat;
+    background-size: 1200px auto;
+  }
+.athm-iconpng-loadingblue::before    { width: 18px; height: 18px; background-position: 0 -110px;}

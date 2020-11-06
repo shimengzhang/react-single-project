@@ -1,0 +1,25 @@
+.load-running {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: 64px;
+  height: 86px;
+  margin: -43px 0 0 -32px;
+  font-size: 12px;
+  color: #7E8DA6;
+  line-height: 1;
+  text-align: center;
+  @keyframes load-running {
+    0% { background-position: 0 0;}
+    100% { background-position: -640px 0;}
+  }
+  .dynamic-running {
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 10px;
+    background: url("../../assets/img/running.png") no-repeat;
+    background-size: 640px auto;
+    animation: load-running 300ms infinite steps(10, end);
+  }
+}

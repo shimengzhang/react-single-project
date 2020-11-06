@@ -1,0 +1,42 @@
+.emptyContainer {
+  margin-top: 50px;
+  text-align: center;
+  .pic {
+    margin: 0 auto;
+    width: 160px;
+    height: 160px;
+    background: url('../../assets/img/empty.png') center no-repeat;
+    background-size: 100%;
+  }
+  .notice {
+    font-family: PingFangSC-Regular;
+    font-size: 17px;
+    color: #111E36;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .tips {
+    margin-top: 12px;
+    margin-bottom: 24px;
+    font-family: PingFangSC-Light;
+    font-size: 13px;
+    color: #666D7F;
+    text-align: center;
+    line-height: 17px;
+  }
+  button {
+    margin-bottom: 60px;
+    width: 108px;
+    height: 40px;
+    border: 1px solid rgba(0,85,255,0.20);
+    border-radius: 4px;
+    font-family: PingFangSC-Regular;
+    font-size: 14px;
+    color: #0055FF;
+    letter-spacing: 0;
+    text-align: center;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+  }
+}
