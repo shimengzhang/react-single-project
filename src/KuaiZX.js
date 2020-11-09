@@ -9,25 +9,34 @@ const uid = getMUserInfo().uid
 
 const params = {uid, sign: 'ex_d5500b6f', c: 'car', n: 10}
 
-async function getData(){
-  return await window.kzx.fetchMlist(params)
+function getData(){
+  return new Promise((resolve, reject)=>{
+    window.kzx.fetchMlist(params).then((data)=>{
+      resolve(data)
+    })
+    // 3 秒超时
+    setTimeout(() => {
+      reject(new Error('time is out'))
+    }, 3000);
+  })
 }
 
 const KuaiZX = () => {
   const [resp, setResp] = useState(null)
   const [loading, setLoading] = useState(false);
 
+  // 获取数据
   const fetchData = useCallback(async ()=>{
-    console.log('fetchData')
-    const res = await getData()
-    setResp((prevResp)=>{
-      if(!prevResp) 
-        return [...res]
-      else 
-        return [...prevResp, ...res]
-    })
+    let res = []
+    try {
+      res = await getData()
+    } catch (error) {
+      console.log(error)
+    }
+    setResp((prevResp)=>(!prevResp ? [...res] : [...prevResp, ...res]))
   }, [])
 
+  // 加载更多
   const reload = useCallback(async ()=>{
     try {
       setLoading(true)
@@ -38,14 +47,9 @@ const KuaiZX = () => {
     }
   }, [fetchData])
 
-  useEffect(()=>{
-    setTimeout(()=>{
-      setLoading(false)
-    }, 200)
-    console.log(document.getElementsByClassName('athm-card').length)
-  }, [resp])
-
-  useEffect(()=>{
+  // 无数据时，点击刷新
+  const refresh = useCallback(()=>{
+    setResp(null)
     if(window.kzx && typeof window.kzx.fetchMlist === 'function'){
       fetchData()
     }else{
@@ -53,11 +57,24 @@ const KuaiZX = () => {
     }
   }, [fetchData])
 
+  // 延时设置 loading 状态
+  useEffect(()=>{
+    setTimeout(()=>{
+      setLoading(false)
+    }, 200)
+    console.log(document.getElementsByClassName('athm-card').length)
+  }, [resp])
+
+  // 页面初始加载数据
+  useEffect(()=>{
+    refresh()
+  }, [refresh])
+
   return (
     <div>
       {
         !resp ? <LoadRunning/> : (
-          resp.length === 0 ? <Empty reload={reload}/>:(
+          resp.length === 0 ? <Empty reload={refresh}/>:(
             <RefreshModule
             loading={loading}
             onRefresh={reload}
