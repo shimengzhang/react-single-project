@@ -1,5 +1,7 @@
 import { getCookie } from '@auto/js-cookie';
-
+// import uuidv4 from 'uuid/v4';
+import { v4 } from 'uuid';
+import { getStorage, setStorage } from './localData';
 /**
  * 格式化日期
  * 使用示例：formatDate(new Date(), 'yyyy-MM-dd')
@@ -101,10 +103,23 @@ function getMUserInfo() {
   };
 }
 
+// 获取 m 端设备 id
+function getMDeviceId() {
+  let deviceid = getCookie('__CAR_MALL_UUID__') || getStorage('__CAR_MALL_UUID__', '');
+
+  if (deviceid === '') {
+    deviceid = v4();
+    setStorage('__CAR_MALL_UUID__', deviceid);
+  }
+
+  return deviceid;
+}
+
 export {
   formatDate,
   getAppInfo,
   insidebrowser,
   jumpUrl,
-  getMUserInfo
+  getMUserInfo,
+  getMDeviceId
 }

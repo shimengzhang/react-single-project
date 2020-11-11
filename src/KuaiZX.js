@@ -3,11 +3,11 @@ import LoadRunning from './components/LoadRunning';
 import Empty from './components/Empty';
 import RefreshModule from './components/RefreshModule';
 
-import { formatDate, jumpUrl, getMUserInfo } from './assets/js/utils'
+import { formatDate, jumpUrl, getMDeviceId } from './assets/js/utils'
 
-const uid = getMUserInfo().uid
+const uid = getMDeviceId()
 
-const params = {uid, sign: 'ex_d5500b6f', c: 'car', n: 10}
+const params = {uid, sign: 'ex_d5500b6f', c: 'othercars', n: 10}
 
 function getData(){
   return new Promise((resolve, reject)=>{
@@ -30,6 +30,7 @@ const KuaiZX = () => {
     let res = []
     try {
       res = await getData()
+      // console.log(res.map((item)=>item.t))
     } catch (error) {
       console.log(error)
     }
@@ -62,7 +63,7 @@ const KuaiZX = () => {
     setTimeout(()=>{
       setLoading(false)
     }, 200)
-    console.log(document.getElementsByClassName('athm-card').length)
+    // console.log(document.getElementsByClassName('athm-card').length)
   }, [resp])
 
   // 页面初始加载数据
@@ -93,9 +94,10 @@ const KuaiZX = () => {
                           <div className="athm-card-album43__assist"><img className="lazyload" data-src={imgs[2]} alt=""/></div>
                         </div>
                         <div className="athm-card-unit-information">
-                        <div className="athm-card-unit-information__item athm-card-unit-information__item--right">{formatDate(new Date(parseInt(item.showtime)), "M-d")}</div>
+                        <div className="athm-card-unit-information__item athm-card-unit-information__item--right">{formatDate(new Date(item.showtime*1000), "M-d")}</div>
                           <div className="athm-card-unit-information__assist">
-                            <span className="athm-card-unit-information__item">{item.cmt_num}评论</span><i className="athm-card-unit-information__division">/</i><span className="athm-card-unit-information__item">{item.f}</span>
+                            {/* <span className="athm-card-unit-information__item">{item.cmt_num}评论</span><i className="athm-card-unit-information__division">/</i> */}
+                            <span className="athm-card-unit-information__item">{item.f}</span>
                           </div>
                         </div>
                       </a>
@@ -108,9 +110,10 @@ const KuaiZX = () => {
                         </div>
                         <div className="athm-card-thumb43__caption">{item.t}</div>
                         <div className="athm-card-unit-information">
-                          <div className="athm-card-unit-information__item athm-card-unit-information__item--right">{formatDate(new Date(parseInt(item.showtime)), "M-d")}</div>
+                          <div className="athm-card-unit-information__item athm-card-unit-information__item--right">{formatDate(new Date(item.showtime*1000), "M-d")}</div>
                           <div className="athm-card-unit-information__assist">
-                            <span className="athm-card-unit-information__item">{item.cmt_num}评论</span><i className="athm-card-unit-information__division">/</i><span className="athm-card-unit-information__item">{item.f}</span>
+                            {/* <span className="athm-card-unit-information__item">{item.cmt_num}评论</span><i className="athm-card-unit-information__division">/</i> */}
+                            <span className="athm-card-unit-information__item">{item.f}</span>
                           </div>
                         </div>
                       </a>
