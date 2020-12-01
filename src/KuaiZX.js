@@ -21,14 +21,14 @@ function getData(){
   })
 }
 
-function isElView(el) {
-  if(!el){
+function isElView(list) {
+  if(!list && list.length){
     return false
   }
-  var top = el.getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
-  var bottom = el.getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
+  var top = list[0].getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
+  var bottom = list[list.length - 1].getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
   var se = document.documentElement.clientHeight; // 浏览器可见区域高度。
-  if (top < se && bottom > 0) {
+  if (top <= 0 && bottom >= se) {
     return true;
   }
   return false;
@@ -111,7 +111,7 @@ const KuaiZX = () => {
       }
       timer = setTimeout(() => {
         const cardList = document.querySelectorAll('.athm-card')
-        if(!isElView(cardList[0]) && !isElView(cardList[cardList.length-1])){
+        if(!isElView(cardList)){
           if(cardList[5]){
             document.documentElement.scrollTop = document.body.scrollTop = cardList[5].offsetTop
           }

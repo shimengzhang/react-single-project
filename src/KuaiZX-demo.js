@@ -24,6 +24,19 @@ function getData(){
   })
 }
 
+function isElView(list) {
+  if(!list && list.length){
+    return false
+  }
+  var top = list[0].getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
+  var bottom = list[list.length - 1].getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
+  var se = document.documentElement.clientHeight; // 浏览器可见区域高度。
+  if (top <= 200 && bottom >= se) {
+    return true;
+  }
+  return false;
+}
+
 const KuaiZX = () => {
   const listRef = useRef([])
   const [resp, setResp] = useState(null)
@@ -49,7 +62,7 @@ const KuaiZX = () => {
     const firstIndex = listLen - 20 > 0 ?listLen - 20 : 0
     const lastIndex = listLen
 
-    handleDom(firstIndex, lastIndex)
+    updateList(firstIndex, lastIndex)
   }, [])
 
   // 加载更多
@@ -73,7 +86,8 @@ const KuaiZX = () => {
     }
   }, [fetchData])
 
-  const handleDom = useCallback((firstIndex, lastIndex)=>{
+  // 更新渲染列表内容
+  const updateList = useCallback((firstIndex, lastIndex)=>{
     const container = document.getElementById('container')
     const loadingDom = document.getElementsByClassName('list-load-bootom')[0]
     const listLen = listRef.current.length
@@ -92,33 +106,57 @@ const KuaiZX = () => {
     setResp(listRef.current.slice(firstIndex, lastIndex))
   },[])
 
+  // 防止滚动太快，内容区域脱离可视区，没有机会触发 updateList 
+  useEffect(()=>{
+    let timer = null
+    window.addEventListener('scroll', ()=>{
+      if(timer){
+        clearTimeout(timer)
+        timer = null
+      }
+      timer = setTimeout(() => {
+        const cardList = document.querySelectorAll('.athm-card')
+        // 如果可视区至少一部分为空白，则将卡片定位到第 5 个
+        if(!isElView(cardList)){
+          if(cardList[5]){
+            document.documentElement.scrollTop = document.body.scrollTop = cardList[5].offsetTop
+          }
+        }
+      }, 200);
+    })
+  }, [])
+
   // 延时设置 loading 状态
   useEffect(()=>{
     let firstItem = null
     let lastItem = null
 
+    // 创建监听对象
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
+        // 如果元素进入可视区
         if(entry.isIntersecting){
-          const {firstIndex, lastIndex} = indexRef.current
+          const { firstIndex } = indexRef.current
           const listLen = listRef.current.length
+
           if(entry.target.id === firstItem.id && parseInt(firstItem.id) > 0) {
             // 当第一个元素进入视窗
             const newFirstIndex = firstIndex - 10 > 0 ? firstIndex - 10 : 0;
             const newLastIndex = newFirstIndex + 20 >= listLen ? listLen : newFirstIndex + 20;
-
-            handleDom(newFirstIndex, newLastIndex)
+            updateList(newFirstIndex, newLastIndex)
           }else if (entry.target.id === lastItem.id && parseInt(lastItem.id) < listRef.current.length - 1){
             // 当展示的最后一个元素，而非真正的最后一个元素进入视窗
             const newFirstIndex = firstIndex + 10;
             const newLastIndex = newFirstIndex + 20 >= listLen ? listLen : newFirstIndex + 20;
-
-            handleDom(newFirstIndex, newLastIndex)
+            if(newFirstIndex < newLastIndex){
+              updateList(newFirstIndex, newLastIndex)
+            }
           }
         }
       });
     });
 
+    // 每当渲染列表发生改变，重新将首尾元素添加进观察列表
     const cardList = document.querySelectorAll('.athm-card');
     if(cardList.length > 0){
       firstItem = cardList[0]
@@ -126,9 +164,11 @@ const KuaiZX = () => {
       observer.observe(firstItem)
       observer.observe(lastItem)
     }
-    setTimeout(()=>{
-      setLoading(false)
-    }, 200)
+
+    // 本次渲染完毕，设置 loading 为 false, 即允许重新触发加载
+    setLoading(false)
+
+    // 本次渲染卸载前，断开观察
     return ()=>{
       observer.disconnect()
     }
@@ -141,6 +181,7 @@ const KuaiZX = () => {
 
   return (
     <div id="container">
+      <div style={{height:200,background:'yellow'}}></div>
       {
         !resp ? <LoadRunning/> : (
           resp.length === 0 ? <Empty reload={refresh}/>:(
