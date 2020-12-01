@@ -8,10 +8,13 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "lazysizes": "^5.2.2",
+    "lorem-ipsum": "^2.0.3",
     "node-sass": "^4.14.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
+    "react-virtualized": "^9.22.2",
+    "react-window": "^1.8.6",
     "uuid": "^8.3.1",
     "web-vitals": "^0.2.4"
   },

@@ -1,7 +1,8 @@
 import {useEffect} from 'react';
 import 'lazysizes';
 import KuaiZX from './KuaiZX.js';
-// import TestDom from './TestDom.js';
+// import Virtualization from './Virtualization.js';
+// import ReactWindow from './ReactWindow';
 import './assets/scss/athm.scss';
 
 function handleLazybeforeunveil(e) {
@@ -21,7 +22,7 @@ function App(){
 
   return (
     <KuaiZX />
-    // <TestDom />
+    // <ReactWindow />
   )
 }
 
