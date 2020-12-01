@@ -45,14 +45,11 @@ const KuaiZX = () => {
     for(var i = 0; i < 10; i++){
       listRef.current.push(listRef.current.length) 
     }
-    // listRef.current = [...listRef.current, ...res]
-    indexRef.current = {
-      firstIndex: listRef.current.length - 20 > 0 ?listRef.current.length - 20: 0,
-      lastIndex: listRef.current.length
-    }
-    document.getElementById('container').style.paddingTop = `${indexRef.current.firstIndex * 204}px`
-    indexRef.current.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    setResp(listRef.current.slice(indexRef.current.firstIndex, indexRef.current.lastIndex))
+    const listLen = listRef.current.length
+    const firstIndex = listLen - 20 > 0 ?listLen - 20 : 0
+    const lastIndex = listLen
+
+    handleDom(firstIndex, lastIndex)
   }, [])
 
   // 加载更多
@@ -76,23 +73,24 @@ const KuaiZX = () => {
     }
   }, [fetchData])
 
-  // useEffect(()=>{
-  //   let timer = null
-  //   window.addEventListener('scroll', ()=>{
-  //     if(timer){
-  //       clearTimeout(timer)
-  //       timer = null
-  //     }
-  //     timer = setTimeout(() => {
-  //       if(indexRef.current.scrollTop <= parseInt(document.getElementById('container').style.paddingTop) || indexRef.current.scrollTop >= parseInt(document.getElementById('container').style.paddingTop + 20*204) ){
-  //         document.documentElement.scrollTop = document.body.scrollTop = parseInt(document.getElementById('container').style.paddingTop) + 10* 204
-  //       }
-  //       // else{
-  //       //   document.documentElement.scrollTop = document.body.scrollTop = indexRef.current.scrollTop
-  //       // }
-  //     }, 200);
-  //   })
-  // },[])
+  const handleDom = useCallback((firstIndex, lastIndex)=>{
+    const container = document.getElementById('container')
+    const loadingDom = document.getElementsByClassName('list-load-bootom')[0]
+    const listLen = listRef.current.length
+    // 设置当前列表首尾索引
+    indexRef.current = {
+      firstIndex,
+      lastIndex,
+    }
+    // 设置容器 padding-top
+    container.style.paddingTop = `${firstIndex * 204}px`
+    // 设置加载中 DOM 的 margin-top
+    if(loadingDom){
+      loadingDom.style.marginTop = `${(listLen - lastIndex) * 204}px`
+    }
+    // 渲染新 resp
+    setResp(listRef.current.slice(firstIndex, lastIndex))
+  },[])
 
   // 延时设置 loading 状态
   useEffect(()=>{
@@ -102,36 +100,20 @@ const KuaiZX = () => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if(entry.isIntersecting){
-          
-          if(entry.target.id === firstItem.id) {
+          const {firstIndex, lastIndex} = indexRef.current
+          const listLen = listRef.current.length
+          if(entry.target.id === firstItem.id && parseInt(firstItem.id) > 0) {
             // 当第一个元素进入视窗
-            if(parseInt(firstItem.id) > 0){
-              const firstIndex = indexRef.current.firstIndex - 10 > 0 ? indexRef.current.firstIndex - 10 : 0;
-              const lastIndex = firstIndex + 20 >= listRef.current.length ? listRef.current.length : firstIndex + 20
-              indexRef.current = {
-                firstIndex,
-                lastIndex,
-              }
-              document.getElementById('container').style.paddingTop = `${indexRef.current.firstIndex * 204}px`
-              // document.getElementById('container').style.paddingBottom = `${(listRef.current.length - indexRef.current.lastIndex) * 204}px`
-              document.getElementsByClassName('list-load-bootom')[0].style.marginTop = `${(listRef.current.length - indexRef.current.lastIndex) * 204}px`
-              indexRef.current.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-              setResp(listRef.current.slice(indexRef.current.firstIndex, indexRef.current.lastIndex))
-            }
-          }else if (entry.target.id === lastItem.id){
-            if(parseInt(lastItem.id) < listRef.current.length - 1){
-              const firstIndex = indexRef.current.firstIndex + 10;
-              const lastIndex = firstIndex + 20 >= listRef.current.length ? listRef.current.length : firstIndex + 20
-              indexRef.current = {
-                firstIndex,
-                lastIndex,
-              }
-              document.getElementById('container').style.paddingTop = `${indexRef.current.firstIndex * 204}px`
-              // document.getElementById('container').style.paddingBottom = `${(listRef.current.length - indexRef.current.lastIndex) * 204}px`
-              document.getElementsByClassName('list-load-bootom')[0].style.marginTop = `${(listRef.current.length - indexRef.current.lastIndex) * 204}px`
-              indexRef.current.scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-              setResp(listRef.current.slice(indexRef.current.firstIndex, indexRef.current.lastIndex))
-            }
+            const newFirstIndex = firstIndex - 10 > 0 ? firstIndex - 10 : 0;
+            const newLastIndex = newFirstIndex + 20 >= listLen ? listLen : newFirstIndex + 20;
+
+            handleDom(newFirstIndex, newLastIndex)
+          }else if (entry.target.id === lastItem.id && parseInt(lastItem.id) < listRef.current.length - 1){
+            // 当展示的最后一个元素，而非真正的最后一个元素进入视窗
+            const newFirstIndex = firstIndex + 10;
+            const newLastIndex = newFirstIndex + 20 >= listLen ? listLen : newFirstIndex + 20;
+
+            handleDom(newFirstIndex, newLastIndex)
           }
         }
       });
