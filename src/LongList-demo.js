@@ -5,29 +5,29 @@ import { formatDate, jumpUrl, getMDeviceId } from './assets/js/utils'
 import './assets/scss/longlist-demo.css'
 
 /** 测试 1 开始*/
-// // 列表行内容模板
-// const Row = (item)=>(
-//   <div className='athm-card' style={{height:104,lineHeight:'104px',textAlign:'center',color:'red', width:'100%',boxSizing:'border-box',border:'solid red 1px'}} >
-//     {item}
-//   </div>
-// )
-// const dataList = []
-// // 加载数据
-// function getData(){
-//   return new Promise((resolve, reject)=>{
-//     setTimeout(() => {
-//       for(let i=0;i<10;i++){
-//         dataList.push(dataList.length)
-//       }
-//       resolve(dataList.slice(-10))
-//     }, 100);
-//   })
-// }
+// 列表行内容模板
+const Row1 = (item)=>(
+  <div className='athm-card' style={{height:204,lineHeight:'104px',textAlign:'center',color:'red', width:'100%',boxSizing:'border-box',border:'solid red 1px'}} >
+    {item}
+  </div>
+)
+const dataList = []
+// 加载数据
+function getData1(){
+  return new Promise((resolve, reject)=>{
+    setTimeout(() => {
+      for(let i=0;i<10;i++){
+        dataList.push(dataList.length)
+      }
+      resolve(dataList.slice(-10))
+    }, 200);
+  })
+}
 /** 测试 1 结束*/
 
 /** 测试 2 开始*/
-// 列表行内容模板
-const Row = (item)=>{
+//列表行内容模板
+const Row2 = (item)=>{
   const imgs = item.i.split('|')
     return imgs.length >= 3? (
       <div className='athm-card'>
@@ -69,7 +69,7 @@ const Row = (item)=>{
 const uid = getMDeviceId()
 const params = {uid, sign: 'ex_d5500b6f', c: 'othercars', n: 10}
 // 加载数据
-const getData = ()=>{
+const getData2 = ()=>{
   return new Promise((resolve, reject)=>{
     window.kzx.fetchMlist(params).then((data)=>{
       resolve(data)
@@ -82,23 +82,24 @@ const getData = ()=>{
 }
 /** 测试 2 结束*/
 const LongListDemo = () => {
-  useEffect(()=>{
-    const stickyDom = document.getElementById('sticky')
-    window.addEventListener('scroll', ()=>{
-      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-      if(scrollTop > 200){
-        stickyDom.classList.add('fixed')
-      }else{
-        stickyDom.classList.remove('fixed')
-      }
-    })
-  }, [])
+  // useEffect(()=>{
+  //   const stickyDom = document.getElementById('sticky')
+  //   window.addEventListener('scroll', ()=>{
+  //     const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+  //     if(scrollTop > 200){
+  //       stickyDom.classList.add('fixed')
+  //     }else{
+  //       stickyDom.classList.remove('fixed')
+  //     }
+  //   })
+  // }, [])
   return (
     <div>
       <div className={"header"}>header</div>
-      <div id="sticky" className={"sticky"}>sticky</div>
+      {/* <div id="sticky" className={"sticky"}>sticky</div> */}
       {/* <LongList Row={Row} getData={getData} height={'100vh'}/> */}
-      <LongList Row={Row} getData={getData} height={'60vh'}/>
+      {/* <LongList Row={Row1} getData={getData1} height={'60vh'}/> */}
+      <LongList Row={Row2} getData={getData2} height={'60vh'}/>
     </div>
     
   );

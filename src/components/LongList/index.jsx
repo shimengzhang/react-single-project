@@ -15,7 +15,9 @@ function isElView(list, t) {
   const top = list[0].getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
   const bottom = list[list.length - 1].getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
   const se = document.documentElement.clientHeight; // 浏览器可见区域高度。
-  if (top <= t && bottom >= se) {
+  // const se = window.screen.height
+  // 头尾判断距离各增大 200 ，因为浏览器兼容性，移动浏览器的导航栏和底部问题
+  if (top <= t+200 && bottom >= se-36 -200) {
     // console.log('isElView true')
     return true;
   }
@@ -26,6 +28,7 @@ function isElView(list, t) {
 const rowClassName = 'list-row';
 
 const LongList = (props) => {
+  const [noMore, setNoMore] = useState(false)
   const {Row, getData, height='100vh'} = props
   const listRef = useRef([])
   const [resp, setResp] = useState(null)
@@ -50,6 +53,10 @@ const LongList = (props) => {
       console.log(error)
     }
     if(Array.isArray(res)){
+      // 返回数据为空，则设置已加载全部
+      if(res.length <= 0){
+        setNoMore(true)
+      }
       listRef.current = [...listRef.current, ...res]
     }
 
@@ -114,7 +121,7 @@ const LongList = (props) => {
   useEffect(()=>{
     let timer = null
     window.addEventListener('scroll', ()=>{
-      if(timer){
+      if(timer ){
         clearTimeout(timer)
         timer = null
       }
@@ -123,7 +130,7 @@ const LongList = (props) => {
         // 如果可视区至少一部分为空白，则将卡片定位到第 5 个
         if(!isElView(cardList, domRef.current.containerOffsetTop)){
           if(cardList[5]){
-            document.documentElement.scrollTop = document.body.scrollTop = cardList[5].offsetTop
+            document.documentElement.scrollTop = document.body.scrollTop = cardList[5].offsetTop + domRef.current.containerOffsetTop
           }
         }
       }, 200);
@@ -191,7 +198,7 @@ const LongList = (props) => {
             <RefreshModule
             loading={loading}
             onRefresh={reload}
-            noMore={false}
+            noMore={noMore}
             indicatorDeactivate={'加载中…'}>
               {
                 resp.map((item, index)=>{
