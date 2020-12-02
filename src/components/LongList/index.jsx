@@ -15,13 +15,11 @@ function isElView(list, t) {
   const top = list[0].getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
   const bottom = list[list.length - 1].getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
   const se = document.documentElement.clientHeight; // 浏览器可见区域高度。
-  // const se = window.screen.height
-  // 头尾判断距离各增大 200 ，因为浏览器兼容性，移动浏览器的导航栏和底部问题
-  if (top <= t+200 && bottom >= se-36 -200) {
-    // console.log('isElView true')
+  // 头尾判断距离各增大 200 ，避免触底加载数据和 scroll 监听事件的 DOM 操作冲突
+  // 监听给 body.scrollTop 赋值之后，加载数据导致的 container.paddingTop 发生变化，从而导致元素的 offsetTop 和 body.scrollTop 不一致产生的白屏
+  if (top <= t + 200 && bottom >= se-36 -200) {
     return true;
   }
-  // console.log('isElView false')
   return false;
 }
 
@@ -130,7 +128,10 @@ const LongList = (props) => {
         // 如果可视区至少一部分为空白，则将卡片定位到第 5 个
         if(!isElView(cardList, domRef.current.containerOffsetTop)){
           if(cardList[5]){
-            document.documentElement.scrollTop = document.body.scrollTop = cardList[5].offsetTop + domRef.current.containerOffsetTop
+            console.log('offsetTop', document.getElementsByClassName('list-row')[5].offsetTop)
+            console.log('paddingTop', document.getElementById('container').style.paddingTop)
+            document.documentElement.scrollTop = document.body.scrollTop = cardList[5].offsetTop
+            console.log('scrollTop', document.body.scrollTop)
           }
         }
       }, 200);
