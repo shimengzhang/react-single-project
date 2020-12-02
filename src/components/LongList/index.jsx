@@ -1,37 +1,44 @@
-import {useState, useEffect, useCallback, useRef} from 'react';
-import LoadRunning from './components/LoadRunning';
-import Empty from './components/Empty';
-import RefreshModule from './components/RefreshModule';
+import {useState, useEffect, useCallback, useRef, cloneElement} from 'react';
+import LoadRunning from '../LoadRunning';
+import Empty from '../Empty';
+import RefreshModule from '../RefreshModule';
 
-function getData(){
-  return new Promise((resolve, reject)=>{
-    setTimeout(() => {
-      resolve(1)
-    }, 100);
-  })
-}
-
-function isElView(list) {
-  if(!list && list.length){
+/**
+ * list 首元素低于 container.offsetTop, 或者尾元素高于可视区底部, 返回 true; 否则返回 false
+ * @param {*} list 列表元素集合
+ * @param {*} t container.offsetTop
+ */
+function isElView(list, t) {
+  if(!list || !list.length){
     return false
   }
-  var top = list[0].getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
-  var bottom = list[list.length - 1].getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
-  var se = document.documentElement.clientHeight; // 浏览器可见区域高度。
-  if (top <= 0 && bottom >= se) {
+  const top = list[0].getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
+  const bottom = list[list.length - 1].getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
+  const se = document.documentElement.clientHeight; // 浏览器可见区域高度。
+  if (top <= t && bottom >= se) {
+    // console.log('isElView true')
     return true;
   }
+  // console.log('isElView false')
   return false;
 }
 
-const KuaiZX = () => {
+const rowClassName = 'list-row';
+
+const LongList = (props) => {
+  const {Row, getData, height='100vh'} = props
   const listRef = useRef([])
   const [resp, setResp] = useState(null)
   const [loading, setLoading] = useState(false);
   const indexRef = useRef({
     firstIndex: 0,
     lastIndex: 0,
-    scrollTop: 0
+  })
+  const domRef = useRef({
+    container: null,
+    containerOffsetTop: 0,
+    loadingDom: null,
+    rowHeight: 0
   })
 
   // 获取数据
@@ -42,9 +49,10 @@ const KuaiZX = () => {
     } catch (error) {
       console.log(error)
     }
-    for(var i = 0; i < 10; i++){
-      listRef.current.push(listRef.current.length) 
+    if(Array.isArray(res)){
+      listRef.current = [...listRef.current, ...res]
     }
+
     const listLen = listRef.current.length
     const firstIndex = listLen - 20 > 0 ?listLen - 20 : 0
     const lastIndex = listLen
@@ -75,8 +83,17 @@ const KuaiZX = () => {
 
   // 更新渲染列表内容
   const updateList = useCallback((firstIndex, lastIndex)=>{
-    const container = document.getElementById('container')
-    const loadingDom = document.getElementsByClassName('list-load-bootom')[0]
+    if(!domRef.current.container){
+      domRef.current.container = document.getElementById('container')
+      domRef.current.containerOffsetTop = domRef.current.container.offsetTop
+    }
+    if(!domRef.current.loadingDom){
+      domRef.current.loadingDom = document.getElementsByClassName('list-load-bootom')[0]
+    }
+    if(!domRef.current.rowHeight){
+      domRef.current.rowHeight = document.querySelectorAll(`.${rowClassName}`)[0]?.offsetHeight || 0
+    }
+    const {container, loadingDom, rowHeight} = domRef.current
     const listLen = listRef.current.length
     // 设置当前列表首尾索引
     indexRef.current = {
@@ -84,10 +101,10 @@ const KuaiZX = () => {
       lastIndex,
     }
     // 设置容器 padding-top
-    container.style.paddingTop = `${firstIndex * 204}px`
+    container.style.paddingTop = `${firstIndex * rowHeight}px`
     // 设置加载中 DOM 的 margin-top
     if(loadingDom){
-      loadingDom.style.marginTop = `${(listLen - lastIndex) * 204}px`
+      loadingDom.style.marginTop = `${(listLen - lastIndex) * rowHeight}px`
     }
     // 渲染新 resp
     setResp(listRef.current.slice(firstIndex, lastIndex))
@@ -102,9 +119,9 @@ const KuaiZX = () => {
         timer = null
       }
       timer = setTimeout(() => {
-        const cardList = document.querySelectorAll('.athm-card')
+        const cardList = document.querySelectorAll(`.${rowClassName}`)
         // 如果可视区至少一部分为空白，则将卡片定位到第 5 个
-        if(!isElView(cardList)){
+        if(!isElView(cardList, domRef.current.containerOffsetTop)){
           if(cardList[5]){
             document.documentElement.scrollTop = document.body.scrollTop = cardList[5].offsetTop
           }
@@ -144,7 +161,7 @@ const KuaiZX = () => {
     });
 
     // 每当渲染列表发生改变，重新将首尾元素添加进观察列表
-    const cardList = document.querySelectorAll('.athm-card');
+    const cardList = document.querySelectorAll(`.${rowClassName}`);
     if(cardList.length > 0){
       firstItem = cardList[0]
       lastItem = cardList[cardList.length - 1]
@@ -167,7 +184,7 @@ const KuaiZX = () => {
   }, [refresh])
 
   return (
-    <div id="container">
+    <div id="container" style={{position:'relative', height: height}}>
       {
         !resp ? <LoadRunning/> : (
           resp.length === 0 ? <Empty reload={refresh}/>:(
@@ -178,11 +195,14 @@ const KuaiZX = () => {
             indicatorDeactivate={'加载中…'}>
               {
                 resp.map((item, index)=>{
-                  // const imgs = item.i.split('|')
+                  const key = indexRef.current.firstIndex + index
+                  const id = key
                   return (
-                    <div className="athm-card" style={{height:204,lineHeight:'204px',textAlign:'center',color:'red', width:'100%',boxSizing:'border-box',border:'solid red 1px'}} key={item} id={item}>
-                      {item}
-                    </div>
+                    cloneElement(Row(item), {
+                      className: rowClassName,
+                      key,
+                      id
+                    })
                   )
                 })
               }
@@ -194,4 +214,4 @@ const KuaiZX = () => {
   );
 };
 
-export default KuaiZX;
+export default LongList;

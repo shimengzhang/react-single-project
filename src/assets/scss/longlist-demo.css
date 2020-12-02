@@ -1,0 +1,22 @@
+.header {
+  width: 100%;
+  height: 200px;
+  line-height: 200px;
+  background: yellow;
+  text-align: center;
+}
+
+.sticky {
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  background: red;
+  position: static;
+}
+
+.fixed {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+}

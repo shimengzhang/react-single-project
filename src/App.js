@@ -1,7 +1,8 @@
 import {useEffect} from 'react';
 import 'lazysizes';
 // import KuaiZX from './KuaiZX.js';
-import KuaiZX from './KuaiZX-demo.js';
+// import KuaiZX from './KuaiZX-demo.js';
+import LongListDemo from './LongList-demo.js';
 // import Virtualization from './Virtualization.js';
 // import ReactWindow from './ReactWindow';
 import './assets/scss/athm.scss';
@@ -22,8 +23,7 @@ function App(){
   }, []);
 
   return (
-    <KuaiZX />
-    // <ReactWindow />
+    <LongListDemo />
   )
 }
 
