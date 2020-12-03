@@ -17,7 +17,7 @@ function isElView(list, t) {
   const se = document.documentElement.clientHeight; // 浏览器可见区域高度。
   // 头尾判断距离各增大 200 ，避免触底加载数据和 scroll 监听事件的 DOM 操作冲突
   // 监听给 body.scrollTop 赋值之后，加载数据导致的 container.paddingTop 发生变化，从而导致元素的 offsetTop 和 body.scrollTop 不一致产生的白屏
-  if (top <= t + 200 && bottom >= se-36 -200) {
+  if (top <= t + 200 && bottom >= se -36 -200) { // 36 是 loadingDom 的高度
     return true;
   }
   return false;
@@ -41,50 +41,6 @@ const LongList = (props) => {
     loadingDom: null,
     rowHeight: 0
   })
-
-  // 获取数据
-  const fetchData = useCallback(async ()=>{
-    let res = []
-    try {
-      res = await getData()
-    } catch (error) {
-      console.log(error)
-    }
-    if(Array.isArray(res)){
-      // 返回数据为空，则设置已加载全部
-      if(res.length <= 0){
-        setNoMore(true)
-      }
-      listRef.current = [...listRef.current, ...res]
-    }
-
-    const listLen = listRef.current.length
-    const firstIndex = listLen - 20 > 0 ?listLen - 20 : 0
-    const lastIndex = listLen
-
-    updateList(firstIndex, lastIndex)
-  }, [])
-
-  // 加载更多
-  const reload = useCallback(async ()=>{
-    try {
-      setLoading(true)
-      await fetchData()
-    } catch (error) {
-      console.log('catch loading false')
-      setLoading(false)
-    }
-  }, [fetchData])
-
-  // 无数据时，点击刷新
-  const refresh = useCallback(()=>{
-    setResp(null)
-    if(window.kzx && typeof window.kzx.fetchMlist === 'function'){
-      fetchData()
-    }else{
-      setResp([])
-    }
-  }, [fetchData])
 
   // 更新渲染列表内容
   const updateList = useCallback((firstIndex, lastIndex)=>{
@@ -114,6 +70,50 @@ const LongList = (props) => {
     // 渲染新 resp
     setResp(listRef.current.slice(firstIndex, lastIndex))
   },[])
+
+  // 获取数据
+  const fetchData = useCallback(async ()=>{
+    let res = []
+    try {
+      res = await getData()
+    } catch (error) {
+      console.log(error)
+    }
+    if(Array.isArray(res)){
+      // 返回数据为空，则设置已加载全部
+      if(res.length <= 0){
+        setNoMore(true)
+      }
+      listRef.current = [...listRef.current, ...res]
+    }
+    let {firstIndex, lastIndex} = indexRef.current
+    const listLen = listRef.current.length
+    lastIndex = lastIndex + 10 > listLen ? listLen : lastIndex + 10
+    firstIndex = lastIndex - 20 > 0 ? lastIndex - 20 : 0
+    
+    updateList(firstIndex, lastIndex)
+  }, [getData, updateList])
+
+  // 加载更多
+  const reload = useCallback(async ()=>{
+    try {
+      setLoading(true)
+      await fetchData()
+    } catch (error) {
+      console.log('catch loading false')
+      setLoading(false)
+    }
+  }, [fetchData])
+
+  // 无数据时，点击刷新
+  const refresh = useCallback(()=>{
+    setResp(null)
+    if(window.kzx && typeof window.kzx.fetchMlist === 'function'){
+      fetchData()
+    }else{
+      setResp([])
+    }
+  }, [fetchData])
 
   // 防止滚动太快，内容区域脱离可视区，没有机会触发 updateList 
   useEffect(()=>{

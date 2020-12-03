@@ -1,11 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useCallback } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './index.scss';
 
 const Index = (props) => {
   const {
     loading,
-    children, onRefresh, noMore, indicatorDeactivate = '上拉可以刷新', indicatorFinish = '- 已加载全部 -',
+    children, onRefresh, noMore, indicatorFinish = '- 已加载全部 -',
   } = props;
   const refreshRef = useRef(null);
 
@@ -24,7 +23,7 @@ const Index = (props) => {
     return () => {
       window.removeEventListener('scroll', onRefreshHandler);
     };
-  }, []);
+  }, [onRefresh]);
 
   
   return (

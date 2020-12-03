@@ -16,10 +16,10 @@ const dataList = []
 function getData1(){
   return new Promise((resolve, reject)=>{
     setTimeout(() => {
-      for(let i=0;i<10;i++){
+      for(let i=0;i<4;i++){
         dataList.push(dataList.length)
       }
-      resolve(dataList.slice(-10))
+      resolve(dataList.slice(-4))
     }, 200);
   })
 }
@@ -97,9 +97,13 @@ const LongListDemo = () => {
     <div>
       <div className={"header"}>header</div>
       {/* <div id="sticky" className={"sticky"}>sticky</div> */}
+      {/* 
+        列表最多同时展示 20 条，一次加载 10 条， getData 可一次返回任意条数据 
+        height 指 LongList 组件在初始视窗中的占比， 默认 100vh，主要为了控制 Running 组件的位置
+      */}
       {/* <LongList Row={Row} getData={getData} height={'100vh'}/> */}
-      {/* <LongList Row={Row1} getData={getData1} height={'60vh'}/> */}
-      <LongList Row={Row2} getData={getData2} height={'60vh'}/>
+      <LongList Row={Row1} getData={getData1} height={'60vh'}/>
+      {/* <LongList Row={Row2} getData={getData2} height={'60vh'}/> */}
     </div>
     
   );
