@@ -16,10 +16,10 @@ const dataList = []
 function getData1(){
   return new Promise((resolve, reject)=>{
     setTimeout(() => {
-      for(let i=0;i<4;i++){
+      for(let i=0;i<10;i++){
         dataList.push(dataList.length)
       }
-      resolve(dataList.slice(-4))
+      resolve(dataList.slice(-10))
     }, 200);
   })
 }
@@ -102,8 +102,8 @@ const LongListDemo = () => {
         height 指 LongList 组件在初始视窗中的占比， 默认 100vh，主要为了控制 Running 组件的位置
       */}
       {/* <LongList Row={Row} getData={getData} height={'100vh'}/> */}
-      <LongList Row={Row1} getData={getData1} height={'60vh'}/>
-      {/* <LongList Row={Row2} getData={getData2} height={'60vh'}/> */}
+      {/* <LongList Row={Row1} getData={getData1} height={'60vh'}/> */}
+      <LongList Row={Row2} getData={getData2} height={'60vh'}/>
     </div>
     
   );

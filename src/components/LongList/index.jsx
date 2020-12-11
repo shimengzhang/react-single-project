@@ -15,7 +15,7 @@ function isElView(list, t) {
   const top = list[0].getBoundingClientRect().top; // 元素顶端到可见区域顶端的距离
   const bottom = list[list.length - 1].getBoundingClientRect().bottom; // 元素底部端到可见区域顶端的距离
   const se = document.documentElement.clientHeight; // 浏览器可见区域高度。
-  // 头尾判断距离各增大 200 ，避免触底加载数据和 scroll 监听事件的 DOM 操作冲突
+  // 头尾判断距离各增大 200 ，避免触底加载数据弹动过大误判为超出视窗，从而和 scroll 监听事件的 DOM 操作冲突
   // 监听给 body.scrollTop 赋值之后，加载数据导致的 container.paddingTop 发生变化，从而导致元素的 offsetTop 和 body.scrollTop 不一致产生的白屏
   if (top <= t + 200 && bottom >= se -36 -200) { // 36 是 loadingDom 的高度
     return true;
@@ -138,7 +138,6 @@ const LongList = (props) => {
     })
   }, [])
 
-  // 延时设置 loading 状态
   useEffect(()=>{
     let firstItem = null
     let lastItem = null
